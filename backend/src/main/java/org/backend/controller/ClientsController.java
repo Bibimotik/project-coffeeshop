@@ -52,9 +52,6 @@ public class ClientsController {
             clients.setUpdateDate(LocalDate.now());
             return new ResponseEntity<>(clientsRepository.save(clients), HttpStatus.CREATED);
         }
-        /*return (clientsRepository.existsById(id)
-                ? new ResponseEntity<>(clientsRepository.save(clients), HttpStatus.OK)
-                : new ResponseEntity<>(clientsRepository.save(clients), HttpStatus.CREATED));*/
     }
 
     @DeleteMapping("/{id}")

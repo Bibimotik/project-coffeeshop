@@ -49,7 +49,9 @@ public class Clients {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
-    public Clients() {}
+    public Clients() {
+        this.points = BigDecimal.ZERO;
+    }
 
     public Clients(String name, String email, LocalDate dateOfBirth) {
         this.id = UUID.randomUUID();
