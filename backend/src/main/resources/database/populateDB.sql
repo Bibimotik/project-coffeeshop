@@ -1,0 +1,5 @@
+-- INSERT INTO coffee (id, name) VALUES
+--                                   ('5cfd98c4-0335-4e53-96f6-edacc7ebf4d0', 'Latte'),
+--                                   ('b9cceeab-073d-43ab-8242-09aab16bc373', 'Americano'),
+--                                   ('aa75c347-d791-43e9-8c70-477f3e26ebba', 'Capuchin'),
+--                                   ('8e14b96a-c5da-4cb9-8c57-b14f197d8b86', 'Ice Latte');
