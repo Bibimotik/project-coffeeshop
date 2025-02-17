@@ -45,3 +45,23 @@ create table if not exists coupons (
     update_date date not null,
     is_deleted boolean not null default false
 );
+
+create table if not exists orders (
+    id uuid unique primary key,
+    clients_id uuid not null references clients (id),
+    total_amount numeric(10, 2) not null,
+    creation_date date not null,
+    update_date date not null,
+    is_deleted boolean not null default false
+);
+
+create table if not exists order_items (
+    id serial unique primary key,
+    orders_id uuid not null references orders (id),
+    goods_id uuid not null references goods (id),
+    quantity integer not null,
+    price numeric(10, 2) not null,
+    creation_date date not null,
+    update_date date not null,
+    is_deleted boolean not null default false
+);

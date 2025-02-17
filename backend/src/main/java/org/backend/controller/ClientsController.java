@@ -1,61 +1,54 @@
 package org.backend.controller;
 
 import org.backend.model.Clients;
-import org.backend.repository.ClientsRepository;
+import org.backend.service.ClientsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/admin/clients")
 public class ClientsController {
-    private final ClientsRepository clientsRepository;
+    private final ClientsService clientsService;
 
-    public ClientsController(ClientsRepository clientsRepository) {
-        this.clientsRepository = clientsRepository;
+    public ClientsController(ClientsService clientsService) {
+        this.clientsService = clientsService;
     }
 
     @GetMapping
     public Iterable<Clients> getAllClients() {
-        return clientsRepository.findAll();
+        return clientsService.getAllClients();
     }
 
     @GetMapping("/{id}")
-    public Optional<Clients> getClientById(@PathVariable UUID id) {
-        return clientsRepository.findById(id);
+    public ResponseEntity<Clients> getClientById(@PathVariable UUID id) {
+        Optional<Clients> client = clientsService.getClientById(id);
+        return client.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public Clients createClient(@RequestBody Clients clients) {
-        clients.setCreationDate(LocalDate.now());
-        clients.setUpdateDate(LocalDate.now());
-        return clientsRepository.save(clients);
+        return clientsService.createClient(clients);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Clients> updateClient(@PathVariable UUID id, @RequestBody Clients clients) {
-        Optional<Clients> updatedClient = clientsRepository.findById(id);
+        Clients updatedClient = clientsService.updateClient(id, clients);
+        return new ResponseEntity<>(updatedClient, HttpStatus.OK);
+    }
 
-        if (updatedClient.isPresent()) {
-            Clients existingClient = updatedClient.get();
-
-            clients.setCreationDate(existingClient.getUpdateDate());
-            clients.setUpdateDate(LocalDate.now());
-
-            return new ResponseEntity<>(clientsRepository.save(clients), HttpStatus.OK);
-        } else {
-            clients.setCreationDate(LocalDate.now());
-            clients.setUpdateDate(LocalDate.now());
-            return new ResponseEntity<>(clientsRepository.save(clients), HttpStatus.CREATED);
-        }
+    @DeleteMapping("/stop/{id}")
+    public ResponseEntity<Void> stopAccount(@PathVariable UUID id) {
+        clientsService.stopAccount(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteClient(@PathVariable UUID id) {
-        clientsRepository.deleteById(id);
+    public ResponseEntity<Void> deleteClient(@PathVariable UUID id) {
+        clientsService.deleteClient(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

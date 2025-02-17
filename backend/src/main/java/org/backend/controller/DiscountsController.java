@@ -1,7 +1,7 @@
 package org.backend.controller;
 
 import org.backend.model.Discounts;
-import org.backend.repository.DiscountsRepository;
+import org.backend.service.DiscountsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,36 +11,37 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/admin/discounts")
 public class DiscountsController {
-    private final DiscountsRepository discountsRepository;
+    private final DiscountsService discountsService;
 
-    public DiscountsController(DiscountsRepository discountsRepository) {
-        this.discountsRepository = discountsRepository;
+    public DiscountsController(DiscountsService discountsService) {
+        this.discountsService = discountsService;
     }
 
     @GetMapping
     public Iterable<Discounts> getDiscounts() {
-        return discountsRepository.findAll();
+        return discountsService.getAllDiscounts();
     }
 
     @GetMapping("/{id}")
-    public Optional<Discounts> getDiscountById(@PathVariable int id) {
-        return discountsRepository.findById(id);
+    public ResponseEntity<Discounts> getDiscountById(@PathVariable int id) {
+        Optional<Discounts> discount = discountsService.getDiscountById(id);
+        return discount.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public Discounts createDiscount(@RequestBody Discounts discounts) {
-        return discountsRepository.save(discounts);
+        return discountsService.createDiscount(discounts);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Discounts> updateDiscount(@PathVariable int id, @RequestBody Discounts discounts) {
-        return (discountsRepository.existsById(id)
-                ? new ResponseEntity<>(discountsRepository.save(discounts), HttpStatus.OK)
-                : new ResponseEntity<>(discountsRepository.save(discounts), HttpStatus.CREATED));
+        Discounts updatedDiscount = discountsService.updateDiscount(id, discounts);
+        return new ResponseEntity<>(updatedDiscount, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteDiscount(@PathVariable int id) {
-        discountsRepository.deleteById(id);
+    public ResponseEntity<Void> deleteDiscount(@PathVariable int id) {
+        discountsService.deleteDiscount(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

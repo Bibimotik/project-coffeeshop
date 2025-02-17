@@ -1,7 +1,7 @@
 package org.backend.controller;
 
 import org.backend.model.Coupons;
-import org.backend.repository.CouponsRepository;
+import org.backend.service.CouponsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,36 +12,37 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/admin/coupons")
 public class CouponsController {
-    private final CouponsRepository couponsRepository;
+    private final CouponsService couponsService;
 
-    public CouponsController(CouponsRepository couponsRepository) {
-        this.couponsRepository = couponsRepository;
+    public CouponsController(CouponsService couponsService) {
+        this.couponsService = couponsService;
     }
 
     @GetMapping
     public Iterable<Coupons> getAllCoupons() {
-        return couponsRepository.findAll();
+        return couponsService.getAllCoupons();
     }
 
     @GetMapping("/{id}")
-    public Optional<Coupons> getCouponById(@PathVariable UUID id) {
-        return couponsRepository.findById(id);
+    public ResponseEntity<Coupons> getCouponById(@PathVariable UUID id) {
+        Optional<Coupons> coupon = couponsService.getCouponById(id);
+        return coupon.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public Coupons createCoupon(@RequestBody Coupons coupons) {
-        return couponsRepository.save(coupons);
+        return couponsService.createCoupon(coupons);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Coupons> updateCoupon(@PathVariable UUID id, @RequestBody Coupons coupons) {
-        return (couponsRepository.existsById(id)
-                ? new ResponseEntity<>(couponsRepository.save(coupons), HttpStatus.OK)
-                : new ResponseEntity<>(couponsRepository.save(coupons), HttpStatus.CREATED));
+        Coupons updatedCoupon = couponsService.updateCoupon(id, coupons);
+        return new ResponseEntity<>(updatedCoupon, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCoupon(@PathVariable UUID id) {
-        couponsRepository.deleteById(id);
+    public ResponseEntity<Void> deleteCoupon(@PathVariable UUID id) {
+        couponsService.deleteCoupon(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
