@@ -26,8 +26,4 @@ public class OrderService {
     public Order createOrder(Order order) {
         return orderRepository.save(order);
     }
-
-    public Order updateOrder(Order order) {
-
-    }
 }
