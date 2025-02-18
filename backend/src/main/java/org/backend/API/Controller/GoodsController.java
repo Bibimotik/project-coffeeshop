@@ -1,7 +1,7 @@
-package org.backend.controller;
+package org.backend.API.Controller;
 
-import org.backend.model.Goods;
-import org.backend.service.GoodsService;
+import org.backend.Domain.Model.Goods;
+import org.backend.Application.Service.GoodsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,15 +40,15 @@ public class GoodsController {
         return new ResponseEntity<>(updatedGoods, HttpStatus.OK);
     }
 
+    @PostMapping("/stop/{id}")
+    public ResponseEntity<Void> stopGoods(@PathVariable UUID id) {
+        goodsService.stopGoods(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteGoods(@PathVariable UUID id) {
         goodsService.deleteGoods(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @DeleteMapping("/stop/{id}")
-    public ResponseEntity<Void> stopGoods(@PathVariable UUID id) {
-        goodsService.stopGoods(id);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

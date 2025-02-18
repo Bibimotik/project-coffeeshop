@@ -1,11 +1,11 @@
-package org.backend.model;
+package org.backend.Domain.Model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,10 +13,9 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "clients")
-public class Clients {
+public class Client {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @UuidGenerator
     @Column(name = "id")
     private UUID id;
 
@@ -49,11 +48,11 @@ public class Clients {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
-    public Clients() {
+    public Client() {
         this.points = BigDecimal.ZERO;
     }
 
-    public Clients(String name, String email, LocalDate dateOfBirth) {
+    public Client(String name, String email, LocalDate dateOfBirth) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.email = email;

@@ -1,7 +1,7 @@
-package org.backend.controller;
+package org.backend.API.Controller;
 
-import org.backend.model.Clients;
-import org.backend.service.ClientsService;
+import org.backend.Domain.Model.Client;
+import org.backend.Application.Service.ClientService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,36 +11,36 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/admin/clients")
-public class ClientsController {
-    private final ClientsService clientsService;
+public class ClientController {
+    private final ClientService clientsService;
 
-    public ClientsController(ClientsService clientsService) {
+    public ClientController(ClientService clientsService) {
         this.clientsService = clientsService;
     }
 
     @GetMapping
-    public Iterable<Clients> getAllClients() {
+    public Iterable<Client> getAllClients() {
         return clientsService.getAllClients();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Clients> getClientById(@PathVariable UUID id) {
-        Optional<Clients> client = clientsService.getClientById(id);
+    public ResponseEntity<Client> getClientById(@PathVariable UUID id) {
+        Optional<Client> client = clientsService.getClientById(id);
         return client.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Clients createClient(@RequestBody Clients clients) {
+    public Client createClient(@RequestBody Client clients) {
         return clientsService.createClient(clients);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Clients> updateClient(@PathVariable UUID id, @RequestBody Clients clients) {
-        Clients updatedClient = clientsService.updateClient(id, clients);
+    public ResponseEntity<Client> updateClient(@PathVariable UUID id, @RequestBody Client clients) {
+        Client updatedClient = clientsService.updateClient(id, clients);
         return new ResponseEntity<>(updatedClient, HttpStatus.OK);
     }
 
-    @DeleteMapping("/stop/{id}")
+    @PostMapping("/stop/{id}")
     public ResponseEntity<Void> stopAccount(@PathVariable UUID id) {
         clientsService.stopAccount(id);
         return new ResponseEntity<>(HttpStatus.OK);

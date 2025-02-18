@@ -1,20 +1,19 @@
-package org.backend.model;
+package org.backend.Domain.Model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
 @Table(name = "discounts")
-public class Discounts {
+public class Discount {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @UuidGenerator
     @Column(name = "id")
     private UUID id;
 
@@ -40,9 +39,9 @@ public class Discounts {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
-    public Discounts() {}
+    public Discount() {}
 
-    public Discounts(Goods goods, Integer percent) {
+    public Discount(Goods goods, Integer percent) {
         this.id = UUID.randomUUID();
         this.goods = goods;
         this.percent = percent;

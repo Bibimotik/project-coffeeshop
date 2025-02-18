@@ -1,26 +1,25 @@
-package org.backend.model;
+package org.backend.Domain.Model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
 @Table(name = "coupons")
-public class Coupons {
+public class Coupon {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @UuidGenerator
     private UUID id;
 
     @NotNull(message = "Client cannot be null")
     @ManyToOne
     @JoinColumn(name = "clients_id", nullable = false)
-    private Clients clients;
+    private Client clients;
 
     @NotNull(message = "Goods cannot be null")
     @ManyToOne
@@ -44,9 +43,9 @@ public class Coupons {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
-    public Coupons() {}
+    public Coupon() {}
 
-    public Coupons(Clients clients, Goods goods, Integer percent) {
+    public Coupon(Client clients, Goods goods, Integer percent) {
         this.clients = clients;
         this.goods = goods;
         this.percent = percent;
@@ -56,14 +55,14 @@ public class Coupons {
     }
 
     public UUID getId() { return id; }
-    public Clients getClient() { return clients; }
+    public Client getClient() { return clients; }
     public Goods getGoods() { return goods; }
     public int getPercent() { return percent; }
     public LocalDate getCreationDate() { return creationDate; }
     public LocalDate getUpdateDate() { return updateDate; }
     public boolean isDeleted() { return isDeleted; }
     public void setId(UUID id) { this.id = id; }
-    public void setClientsId(Clients clients) {  this.clients = clients; }
+    public void setClientsId(Client clients) {  this.clients = clients; }
     public void setGoodsId(Goods goods) { this.goods = goods; }
     public void setPercent(int percent) { this.percent = percent; }
     public void setCreationDate(LocalDate creationDate) { this.creationDate = creationDate; }

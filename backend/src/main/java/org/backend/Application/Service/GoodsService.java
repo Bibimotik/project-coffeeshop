@@ -1,7 +1,8 @@
-package org.backend.service;
+package org.backend.Application.Service;
 
-import org.backend.model.Goods;
-import org.backend.repository.GoodsRepository;
+import org.backend.Domain.Interfaces.IGoodsService;
+import org.backend.Domain.Model.Goods;
+import org.backend.Persistence.Repository.GoodsRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -9,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class GoodsService {
+public class GoodsService implements IGoodsService {
     private final GoodsRepository goodsRepository;
 
     public GoodsService(GoodsRepository goodsRepository) {
@@ -25,8 +26,8 @@ public class GoodsService {
     }
 
     public Goods createGoods(Goods goods) {
-        goods.setCreationDate(LocalDate.now());
-        goods.setUpdateDate(LocalDate.now());
+//        goods.setCreationDate(LocalDate.now());
+//        goods.setUpdateDate(LocalDate.now());
         return goodsRepository.save(goods);
     }
 
@@ -35,18 +36,19 @@ public class GoodsService {
 
         if (existingGoods.isPresent()) {
             Goods existing = existingGoods.get();
-            goods.setCreationDate(existing.getCreationDate());
-            goods.setUpdateDate(LocalDate.now());
-            return goodsRepository.save(goods);
+            existing.setCategory(existing.getCategory());
+            existing.setName(existing.getName());
+            existing.setSize(existing.getSize());
+            existing.setComposition(existing.getComposition());
+            existing.setImage(existing.getImage());
+            existing.setPrice(existing.getPrice());
+            existing.setUpdateDate(LocalDate.now());
         } else {
             goods.setCreationDate(LocalDate.now());
             goods.setUpdateDate(LocalDate.now());
-            return goodsRepository.save(goods);
         }
-    }
 
-    public void deleteGoods(UUID id) {
-        goodsRepository.deleteById(id);
+        return goodsRepository.save(goods);
     }
 
     public void stopGoods(UUID id) {
@@ -58,5 +60,9 @@ public class GoodsService {
             goods.setUpdateDate(LocalDate.now());
             goodsRepository.save(goods);
         }
+    }
+
+    public void deleteGoods(UUID id) {
+        goodsRepository.deleteById(id);
     }
 }
