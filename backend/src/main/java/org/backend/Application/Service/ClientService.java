@@ -26,8 +26,6 @@ public class ClientService implements IClientsService {
     }
 
     public Client createClient(Client clients) {
-        clients.setCreationDate(LocalDate.now());
-        clients.setUpdateDate(LocalDate.now());
         return clientsRepository.save(clients);
     }
 

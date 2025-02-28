@@ -19,6 +19,7 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("io.github.cdimascio:dotenv-java:3.2.0")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")

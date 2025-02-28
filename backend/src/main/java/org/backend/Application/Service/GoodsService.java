@@ -26,8 +26,6 @@ public class GoodsService implements IGoodsService {
     }
 
     public Goods createGoods(Goods goods) {
-//        goods.setCreationDate(LocalDate.now());
-//        goods.setUpdateDate(LocalDate.now());
         return goodsRepository.save(goods);
     }
 
