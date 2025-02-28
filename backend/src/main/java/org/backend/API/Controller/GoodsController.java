@@ -1,5 +1,6 @@
 package org.backend.API.Controller;
 
+import org.backend.Application.DTO.GoodsDTO;
 import org.backend.Domain.Model.Goods;
 import org.backend.Application.Service.GoodsService;
 import org.springframework.http.HttpStatus;
@@ -30,8 +31,8 @@ public class GoodsController {
     }
 
     @PostMapping
-    public Goods createGoods(@RequestBody Goods goods) {
-        return goodsService.createGoods(goods);
+    public Goods createGoods(@RequestBody GoodsDTO goodsDTO) {
+        return goodsService.createGoods(goodsDTO);
     }
 
     @PutMapping("/{id}")

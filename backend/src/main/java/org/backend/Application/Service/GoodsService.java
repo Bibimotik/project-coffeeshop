@@ -1,6 +1,8 @@
 package org.backend.Application.Service;
 
-import org.backend.Domain.Interfaces.IGoodsService;
+import org.backend.API.Mappers.GoodsMapper;
+import org.backend.Application.DTO.GoodsDTO;
+import org.backend.Application.Interfaces.IGoodsService;
 import org.backend.Domain.Model.Goods;
 import org.backend.Persistence.Repository.GoodsRepository;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,8 @@ public class GoodsService implements IGoodsService {
         return goodsRepository.findById(id);
     }
 
-    public Goods createGoods(Goods goods) {
+    public Goods createGoods(GoodsDTO goodsDTO) {
+        Goods goods = GoodsMapper.toEntity(goodsDTO);
         return goodsRepository.save(goods);
     }
 

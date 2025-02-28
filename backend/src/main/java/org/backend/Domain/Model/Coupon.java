@@ -14,6 +14,7 @@ import java.util.UUID;
 public class Coupon {
     @Id
     @UuidGenerator
+    @Column(name = "id")
     private UUID id;
 
     @NotNull(message = "Client cannot be null")

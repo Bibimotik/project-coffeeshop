@@ -28,7 +28,7 @@ create table if not exists goods (
 );
 
 create table if not exists discounts (
-    id serial unique primary key,
+    id uuid unique primary key,
     goods_id uuid not null references goods (id),
     percent integer not null check (percent between 0 and 100),
     creation_date date not null, -- дата создания, сделать правило чтобы со временем само удаляло скидку

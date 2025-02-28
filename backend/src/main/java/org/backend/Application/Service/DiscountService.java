@@ -1,12 +1,15 @@
 package org.backend.Application.Service;
 
-import org.backend.Domain.Interfaces.IDiscountsService;
+import org.backend.API.Mappers.DiscountMapper;
+import org.backend.Application.DTO.DiscountDTO;
+import org.backend.Application.Interfaces.IDiscountsService;
 import org.backend.Domain.Model.Discount;
 import org.backend.Persistence.Repository.DiscountRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class DiscountService implements IDiscountsService {
@@ -20,15 +23,16 @@ public class DiscountService implements IDiscountsService {
         return discountsRepository.findAll();
     }
 
-    public Optional<Discount> getDiscountById(int id) {
+    public Optional<Discount> getDiscountById(UUID id) {
         return discountsRepository.findById(id);
     }
 
-    public Discount createDiscount(Discount discounts) {
-        return discountsRepository.save(discounts);
+    public Discount createDiscount(DiscountDTO discountDTO) {
+        Discount discount = DiscountMapper.toEntity(discountDTO);
+        return discountsRepository.save(discount);
     }
 
-    public Discount updateDiscount(int id, Discount discounts) {
+    public Discount updateDiscount(UUID id, Discount discounts) {
         Optional<Discount> existingDiscount = discountsRepository.findById(id);
 
         if (existingDiscount.isPresent()) {
@@ -44,7 +48,7 @@ public class DiscountService implements IDiscountsService {
         return discountsRepository.save(discounts);
     }
 
-    public void stopDiscount(int id) {
+    public void stopDiscount(UUID id) {
         Optional<Discount> discountsOptional = discountsRepository.findById(id);
 
         if (discountsOptional.isPresent()) {
@@ -55,7 +59,7 @@ public class DiscountService implements IDiscountsService {
         }
     }
 
-    public void deleteDiscount(int id) {
+    public void deleteDiscount(UUID id) {
         discountsRepository.deleteById(id);
     }
 }

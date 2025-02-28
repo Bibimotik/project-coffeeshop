@@ -1,5 +1,6 @@
 package org.backend.API.Controller;
 
+import org.backend.Application.DTO.CouponDTO;
 import org.backend.Domain.Model.Coupon;
 import org.backend.Application.Service.CouponService;
 import org.springframework.http.HttpStatus;
@@ -30,8 +31,8 @@ public class CouponController {
     }
 
     @PostMapping
-    public Coupon createCoupon(@RequestBody Coupon coupons) {
-        return couponsService.createCoupon(coupons);
+    public Coupon createCoupon(@RequestBody CouponDTO couponsDTO) {
+        return couponsService.createCoupon(couponsDTO);
     }
 
     @PutMapping("/{id}")

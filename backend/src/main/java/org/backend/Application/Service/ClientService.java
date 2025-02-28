@@ -1,6 +1,8 @@
 package org.backend.Application.Service;
 
-import org.backend.Domain.Interfaces.IClientsService;
+import org.backend.API.Mappers.ClientMapper;
+import org.backend.Application.DTO.ClientDTO;
+import org.backend.Application.Interfaces.IClientsService;
 import org.backend.Domain.Model.Client;
 import org.backend.Persistence.Repository.ClientRepository;
 import org.springframework.stereotype.Service;
@@ -25,8 +27,9 @@ public class ClientService implements IClientsService {
         return clientsRepository.findById(id);
     }
 
-    public Client createClient(Client clients) {
-        return clientsRepository.save(clients);
+    public Client createClient(ClientDTO clientDTO) {
+        Client client = ClientMapper.toEntity(clientDTO);
+        return clientsRepository.save(client);
     }
 
     public Client updateClient(UUID id, Client clients) {

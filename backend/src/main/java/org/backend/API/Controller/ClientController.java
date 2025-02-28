@@ -1,5 +1,6 @@
 package org.backend.API.Controller;
 
+import org.backend.Application.DTO.ClientDTO;
 import org.backend.Domain.Model.Client;
 import org.backend.Application.Service.ClientService;
 import org.springframework.http.HttpStatus;
@@ -30,8 +31,8 @@ public class ClientController {
     }
 
     @PostMapping
-    public Client createClient(@RequestBody Client clients) {
-        return clientsService.createClient(clients);
+    public Client createClient(@RequestBody ClientDTO clientDTO) {
+        return clientsService.createClient(clientDTO);
     }
 
     @PutMapping("/{id}")

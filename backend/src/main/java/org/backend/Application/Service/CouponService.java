@@ -1,6 +1,8 @@
 package org.backend.Application.Service;
 
-import org.backend.Domain.Interfaces.ICouponsService;
+import org.backend.API.Mappers.CouponMapper;
+import org.backend.Application.DTO.CouponDTO;
+import org.backend.Application.Interfaces.ICouponsService;
 import org.backend.Domain.Model.Coupon;
 import org.backend.Persistence.Repository.CouponRepository;
 import org.springframework.stereotype.Service;
@@ -25,8 +27,9 @@ public class CouponService implements ICouponsService {
         return couponsRepository.findById(id);
     }
 
-    public Coupon createCoupon(Coupon coupons) {
-        return couponsRepository.save(coupons);
+    public Coupon createCoupon(CouponDTO couponDTO) {
+        Coupon coupon = CouponMapper.toEntity(couponDTO);
+        return couponsRepository.save(coupon);
     }
 
     public Coupon updateCoupon(UUID id, Coupon coupons) {
