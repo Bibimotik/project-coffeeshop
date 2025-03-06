@@ -53,7 +53,6 @@ public class Client {
     }
 
     public Client(String name, String email, LocalDate dateOfBirth) {
-        this.id = UUID.randomUUID();
         this.name = name;
         this.email = email;
         this.dateOfBirth = dateOfBirth;

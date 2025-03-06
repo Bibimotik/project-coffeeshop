@@ -1,29 +1,39 @@
 package org.backend.Application.Service;
 
+import org.backend.API.Mappers.OrderMapper;
+import org.backend.Application.DTO.OrderDTO;
+import org.backend.Application.Interfaces.IOrderService;
 import org.backend.Domain.Model.Order;
 import org.backend.Persistence.Repository.OrderRepository;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Service
-public class OrderService {
-    private final OrderRepository orderRepository;
+public class OrderService implements IOrderService {
+	private final OrderRepository orderRepository;
 
-    public OrderService(OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
-    }
+	public OrderService(OrderRepository orderRepository) {
+		this.orderRepository = orderRepository;
+	}
 
-    public Iterable<Order> getAllOrders() {
-        return orderRepository.findAll();
-    }
+	@Async
+	public CompletableFuture<Iterable<Order>> getAsync() {
+		return CompletableFuture.supplyAsync(orderRepository::findAll);
+	}
 
-    public Optional<Order> getOrderById(UUID id) {
-        return orderRepository.findById(id);
-    }
+	@Async
+	public CompletableFuture<Optional<Order>> getAsync(UUID id) {
+		return CompletableFuture.supplyAsync(() -> orderRepository.findById(id));
+	}
 
-    public Order createOrder(Order order) {
-        return orderRepository.save(order);
-    }
+	@Async
+	public CompletableFuture<Order> createAsync(OrderDTO orderDTO) {
+		var order = OrderMapper.toEntity(orderDTO);
+
+		return CompletableFuture.supplyAsync(() -> orderRepository.save(order));
+	}
 }

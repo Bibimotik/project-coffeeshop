@@ -1,21 +1,22 @@
 package org.backend.API.Controller;
 
 import org.backend.Application.DTO.ClientDTO;
+import org.backend.Application.Interfaces.IClientsService;
 import org.backend.Domain.Model.Client;
-import org.backend.Application.Service.ClientService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/admin/clients")
 public class ClientController {
-    private final ClientService clientsService;
+    private final IClientsService clientsService;
 
-    public ClientController(ClientService clientsService) {
+    public ClientController(IClientsService clientsService) {
         this.clientsService = clientsService;
     }
 
@@ -31,8 +32,8 @@ public class ClientController {
     }
 
     @PostMapping
-    public Client createClient(@RequestBody ClientDTO clientDTO) {
-        return clientsService.createClient(clientDTO);
+    public CompletableFuture<Client> createClient(@RequestBody ClientDTO clientDTO) {
+         return clientsService.createAsync(clientDTO);
     }
 
     @PutMapping("/{id}")

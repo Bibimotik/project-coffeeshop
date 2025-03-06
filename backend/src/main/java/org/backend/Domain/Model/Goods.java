@@ -59,7 +59,6 @@ public class Goods {
     public Goods() {}
 
     public Goods(String category, String name, int size, String composition, BigDecimal price, String image) {
-        this.id = UUID.randomUUID();
         this.category = category;
         this.name = name;
         this.size = size;
