@@ -35,7 +35,7 @@ public class ClientController {
 
     @PostMapping
     public CompletableFuture<Client> createClient(@RequestBody ClientDTO clientDTO) {
-         return clientsService.createClient(clientDTO);
+         return clientsService.createAsync(clientDTO);
     }
 
     @PutMapping("/{id}")
