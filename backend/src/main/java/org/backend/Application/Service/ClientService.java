@@ -33,10 +33,10 @@ public class ClientService implements IClientsService {
 	@Async
 	public CompletableFuture<Client> createAsync(ClientDTO clientDTO) {
 		if (clientsRepository.existsByEmail(clientDTO.email()))
-			throw new AlreadyExistException("Client with email ${clientDTO.email} already exists.}");
+			throw new AlreadyExistException("Client with email " + clientDTO.email() + " already exists.");
 
-		Client client = ClientMapper.toEntity(clientDTO);
-		System.out.println(client);
+		var client = ClientMapper.toEntity(clientDTO);
+
 		return CompletableFuture.completedFuture(clientsRepository.save(client));
 	}
 
@@ -50,7 +50,8 @@ public class ClientService implements IClientsService {
 			existing.setEmail(clients.getEmail());
 			existing.setDateOfBirth(clients.getDateOfBirth());
 			existing.setUpdateDate(LocalDate.now());
-		} else {
+		}
+		else {
 			clients.setCreationDate(LocalDate.now());
 			clients.setUpdateDate(LocalDate.now());
 		}
