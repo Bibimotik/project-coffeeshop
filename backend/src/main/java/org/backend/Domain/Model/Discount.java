@@ -42,7 +42,6 @@ public class Discount {
     public Discount() {}
 
     public Discount(Goods goods, Integer percent) {
-        this.id = UUID.randomUUID();
         this.goods = goods;
         this.percent = percent;
         this.creationDate = LocalDate.now();

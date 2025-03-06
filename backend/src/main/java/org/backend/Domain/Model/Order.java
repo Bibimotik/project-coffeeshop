@@ -42,7 +42,6 @@ public class Order {
     }
 
     public Order(Client client, BigDecimal totalAmount) {
-        this.id = UUID.randomUUID();
         this.client = client;
         this.totalAmount = totalAmount;
         this.creationDate = LocalDate.now();

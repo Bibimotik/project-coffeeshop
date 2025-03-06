@@ -29,6 +29,7 @@ public class ClientService implements IClientsService {
 
     public Client createClient(ClientDTO clientDTO) {
         Client client = ClientMapper.toEntity(clientDTO);
+        System.out.println(client);
         return clientsRepository.save(client);
     }
 
