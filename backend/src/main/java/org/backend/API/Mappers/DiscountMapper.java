@@ -10,7 +10,7 @@ public class DiscountMapper {
         }
 
         return new Discount(
-                discountDTO.goods(),
+                discountDTO.goodsId(),
                 discountDTO.percent()
         );
     }
