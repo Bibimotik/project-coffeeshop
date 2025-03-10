@@ -5,11 +5,13 @@ import org.backend.Application.DTO.GoodsDTO;
 import org.backend.Application.Interfaces.IGoodsService;
 import org.backend.Domain.Model.Goods;
 import org.backend.Persistence.Repository.GoodsRepository;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class GoodsService implements IGoodsService {
@@ -19,20 +21,24 @@ public class GoodsService implements IGoodsService {
         this.goodsRepository = goodsRepository;
     }
 
-    public Iterable<Goods> getAllGoods() {
-        return goodsRepository.findAll();
+    @Async
+    public CompletableFuture<Iterable<Goods>> getAllGoods() {
+        return CompletableFuture.supplyAsync(goodsRepository::findAll);
     }
 
-    public Optional<Goods> getGoods(UUID id) {
-        return goodsRepository.findById(id);
+    @Async
+    public CompletableFuture<Optional<Goods>> getGoodsById(UUID id) {
+        return CompletableFuture.supplyAsync(() -> goodsRepository.findById(id));
     }
 
-    public Goods createGoods(GoodsDTO goodsDTO) {
+    @Async
+    public CompletableFuture<Goods> createGoods(GoodsDTO goodsDTO) {
         Goods goods = GoodsMapper.toEntity(goodsDTO);
-        return goodsRepository.save(goods);
+        return CompletableFuture.supplyAsync(() -> goodsRepository.save(goods));
     }
 
-    public Goods updateGoods(UUID id, Goods goods) {
+    @Async
+    public CompletableFuture<Goods> updateGoods(UUID id, Goods goods) {
         Optional<Goods> existingGoods = goodsRepository.findById(id);
 
         if (existingGoods.isPresent()) {
@@ -49,9 +55,10 @@ public class GoodsService implements IGoodsService {
             goods.setUpdateDate(LocalDate.now());
         }
 
-        return goodsRepository.save(goods);
+        return CompletableFuture.supplyAsync(() -> goodsRepository.save(goods));
     }
 
+    @Async
     public void stopGoods(UUID id) {
         Optional<Goods> goodsOptional = goodsRepository.findById(id);
 
@@ -59,11 +66,12 @@ public class GoodsService implements IGoodsService {
             Goods goods = goodsOptional.get();
             goods.setDeleted(true);
             goods.setUpdateDate(LocalDate.now());
-            goodsRepository.save(goods);
+            CompletableFuture.runAsync(() -> goodsRepository.save(goods));
         }
     }
 
+    @Async
     public void deleteGoods(UUID id) {
-        goodsRepository.deleteById(id);
+        CompletableFuture.runAsync(() -> goodsRepository.deleteById(id));
     }
 }

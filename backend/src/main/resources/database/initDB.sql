@@ -31,6 +31,9 @@ create table if not exists discounts (
     id uuid unique primary key,
     goods_id uuid not null references goods (id),
     percent integer not null check (percent between 0 and 100),
+    -- TODO
+    -- это можно делать с помощью например hangfire(альтернативу в java не знаю)
+    -- оно выполняет таски на фоне, например через определенное время, или запускает таймеры на таски
     creation_date date not null, -- дата создания, сделать правило чтобы со временем само удаляло скидку
     update_date date not null,
     is_deleted boolean not null default false

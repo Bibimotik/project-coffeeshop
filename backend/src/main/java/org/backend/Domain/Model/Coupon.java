@@ -18,12 +18,12 @@ public class Coupon {
     private UUID id;
 
     @NotNull(message = "Client cannot be null")
-    @ManyToOne
-    @JoinColumn(name = "clients_id", nullable = false)
-    private Client clients;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "client_id", nullable = false)
+    private Client client;
 
     @NotNull(message = "Goods cannot be null")
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "goods_id", nullable = false)
     private Goods goods;
 
@@ -46,8 +46,8 @@ public class Coupon {
 
     public Coupon() {}
 
-    public Coupon(Client clients, Goods goods, Integer percent) {
-        this.clients = clients;
+    public Coupon(Client client, Goods goods, Integer percent) {
+        this.client = client;
         this.goods = goods;
         this.percent = percent;
         this.creationDate = LocalDate.now();
@@ -56,15 +56,16 @@ public class Coupon {
     }
 
     public UUID getId() { return id; }
-    public Client getClient() { return clients; }
+    public Client getClient() { return client; }
     public Goods getGoods() { return goods; }
     public int getPercent() { return percent; }
     public LocalDate getCreationDate() { return creationDate; }
     public LocalDate getUpdateDate() { return updateDate; }
     public boolean isDeleted() { return isDeleted; }
+
     public void setId(UUID id) { this.id = id; }
-    public void setClientsId(Client clients) {  this.clients = clients; }
-    public void setGoodsId(Goods goods) { this.goods = goods; }
+    public void setClient(Client client) { this.client = client; }
+    public void setGoods(Goods goods) { this.goods = goods; }
     public void setPercent(int percent) { this.percent = percent; }
     public void setCreationDate(LocalDate creationDate) { this.creationDate = creationDate; }
     public void setUpdateDate(LocalDate updateDate) { this.updateDate = updateDate; }
@@ -72,9 +73,9 @@ public class Coupon {
 
     @Override
     public String toString() {
-        return "Coupons{" +
+        return "Coupon{" +
                 "id=" + id +
-                ", client=" + clients +
+                ", client=" + client +
                 ", goods=" + goods +
                 ", percent=" + percent +
                 ", creationDate=" + creationDate +

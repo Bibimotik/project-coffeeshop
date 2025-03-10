@@ -1,11 +1,10 @@
 package org.backend.Application.DTO;
 
-import org.backend.Domain.Model.Client;
-import org.backend.Domain.Model.Goods;
+import java.util.UUID;
 
 public record CouponDTO(
-        Client clientId,
-        Goods goodsId,
+        UUID clientId,
+        UUID goodsId,
         int percent
 ) {
 }

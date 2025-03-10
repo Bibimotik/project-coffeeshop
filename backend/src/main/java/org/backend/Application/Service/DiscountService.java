@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class DiscountService implements IDiscountsService {
@@ -19,20 +20,20 @@ public class DiscountService implements IDiscountsService {
         this.discountsRepository = discountsRepository;
     }
 
-    public Iterable<Discount> getAllDiscounts() {
-        return discountsRepository.findAll();
+    public CompletableFuture<Iterable<Discount>> getAllDiscounts() {
+        return CompletableFuture.supplyAsync(discountsRepository::findAll);
     }
 
-    public Optional<Discount> getDiscountById(UUID id) {
-        return discountsRepository.findById(id);
+    public CompletableFuture<Optional<Discount>> getDiscountById(UUID id) {
+        return CompletableFuture.supplyAsync(() -> discountsRepository.findById(id));
     }
 
-    public Discount createDiscount(DiscountDTO discountDTO) {
+    public CompletableFuture<Discount> createDiscount(DiscountDTO discountDTO) {
         Discount discount = DiscountMapper.toEntity(discountDTO);
-        return discountsRepository.save(discount);
+        return CompletableFuture.supplyAsync(() -> discountsRepository.save(discount));
     }
 
-    public Discount updateDiscount(UUID id, Discount discounts) {
+    public CompletableFuture<Discount> updateDiscount(UUID id, Discount discounts) {
         Optional<Discount> existingDiscount = discountsRepository.findById(id);
 
         if (existingDiscount.isPresent()) {
@@ -45,7 +46,7 @@ public class DiscountService implements IDiscountsService {
             discounts.setUpdateDate(LocalDate.now());
         }
 
-        return discountsRepository.save(discounts);
+        return CompletableFuture.supplyAsync(() -> discountsRepository.save(discounts));
     }
 
     public void stopDiscount(UUID id) {
@@ -55,11 +56,11 @@ public class DiscountService implements IDiscountsService {
             Discount discounts = discountsOptional.get();
             discounts.setDeleted(true);
             discounts.setUpdateDate(LocalDate.now());
-            discountsRepository.save(discounts);
+            CompletableFuture.runAsync(() -> discountsRepository.save(discounts));
         }
     }
 
     public void deleteDiscount(UUID id) {
-        discountsRepository.deleteById(id);
+        CompletableFuture.runAsync(() -> discountsRepository.deleteById(id));
     }
 }
