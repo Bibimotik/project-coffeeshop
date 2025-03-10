@@ -8,13 +8,13 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public interface IClientsService {
-	Iterable<Client> getAllClients();
+	CompletableFuture<Iterable<Client>> getAllClients();
 
-	Optional<Client> getClientById(UUID id);
+	CompletableFuture<Optional<Client>> getClientById(UUID id);
 
 	CompletableFuture<Client> createAsync(ClientDTO clientDTO);
 
-	Client updateClient(UUID id, Client clients);
+	CompletableFuture<Client> updateClient(UUID id, Client clients);
 
 	void stopAccount(UUID id);
 

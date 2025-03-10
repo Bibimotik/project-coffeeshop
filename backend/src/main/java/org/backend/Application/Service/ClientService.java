@@ -22,12 +22,14 @@ public class ClientService implements IClientsService {
 		this.clientsRepository = clientsRepository;
 	}
 
-	public Iterable<Client> getAllClients() {
-		return clientsRepository.findAll();
+	@Async
+	public CompletableFuture<Iterable<Client>> getAllClients() {
+		return CompletableFuture.supplyAsync(clientsRepository::findAll);
 	}
 
-	public Optional<Client> getClientById(UUID id) {
-		return clientsRepository.findById(id);
+	@Async
+	public CompletableFuture<Optional<Client>> getClientById(UUID id) {
+		return CompletableFuture.supplyAsync(() -> clientsRepository.findById(id));
 	}
 
 	@Async
@@ -40,7 +42,8 @@ public class ClientService implements IClientsService {
 		return CompletableFuture.completedFuture(clientsRepository.save(client));
 	}
 
-	public Client updateClient(UUID id, Client clients) {
+	@Async
+	public CompletableFuture<Client> updateClient(UUID id, Client clients) {
 		Optional<Client> existingClient = clientsRepository.findById(id);
 
 		if (existingClient.isPresent()) {
@@ -56,9 +59,10 @@ public class ClientService implements IClientsService {
 			clients.setUpdateDate(LocalDate.now());
 		}
 
-		return clientsRepository.save(clients);
+		return CompletableFuture.supplyAsync(() -> clientsRepository.save(clients));
 	}
 
+	@Async
 	public void stopAccount(UUID id) {
 		Optional<Client> clientOptional = clientsRepository.findById(id);
 
@@ -66,11 +70,12 @@ public class ClientService implements IClientsService {
 			Client client = clientOptional.get();
 			client.setDeleted(true);
 			client.setUpdateDate(LocalDate.now());
-			clientsRepository.save(client);
+			CompletableFuture.runAsync(() -> clientsRepository.save(client));
 		}
 	}
 
+	@Async
 	public void deleteClient(UUID id) {
-		clientsRepository.deleteById(id);
+		CompletableFuture.runAsync(() -> clientsRepository.deleteById(id));
 	}
 }

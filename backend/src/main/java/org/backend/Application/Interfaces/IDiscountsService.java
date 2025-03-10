@@ -5,12 +5,13 @@ import org.backend.Domain.Model.Discount;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public interface IDiscountsService {
-    Iterable<Discount> getAllDiscounts();
-    Optional<Discount> getDiscountById(UUID id);
-    Discount createDiscount(DiscountDTO discountDTO);
-    Discount updateDiscount(UUID id, Discount discounts);
+    CompletableFuture<Iterable<Discount>> getAllDiscounts();
+    CompletableFuture<Optional<Discount>> getDiscountById(UUID id);
+    CompletableFuture<Discount> createDiscount(DiscountDTO discountDTO);
+    CompletableFuture<Discount> updateDiscount(UUID id, Discount discounts);
     void stopDiscount(UUID id);
     void deleteDiscount(UUID id);
 }

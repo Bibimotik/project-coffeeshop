@@ -5,12 +5,13 @@ import org.backend.Domain.Model.Coupon;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public interface ICouponsService {
-    Iterable<Coupon> getAllCoupons();
-    Optional<Coupon> getCouponById(UUID id);
-    Coupon createCoupon(CouponDTO couponDTO);
-     Coupon updateCoupon(UUID id, CouponDTO couponDTO);
+    CompletableFuture<Iterable<Coupon>> getAllCoupons();
+    CompletableFuture<Optional<Coupon>> getCouponById(UUID id);
+    CompletableFuture<Coupon> createCoupon(CouponDTO couponDTO);
+    CompletableFuture<Coupon> updateCoupon(UUID id, CouponDTO couponDTO);
     void stopCoupons(UUID id);
     void deleteCoupon(UUID id);
 }

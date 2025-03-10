@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/admin/discounts")
@@ -20,36 +20,45 @@ public class DiscountController {
     }
 
     @GetMapping
-    public Iterable<Discount> getDiscounts() {
-        return discountsService.getAllDiscounts();
+    public CompletableFuture<ResponseEntity<Iterable<Discount>>> getDiscounts() {
+        return discountsService.getAllDiscounts()
+                .thenApply(ResponseEntity::ok)
+                .exceptionally(ex -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Discount> getDiscountById(@PathVariable UUID id) {
-        Optional<Discount> discount = discountsService.getDiscountById(id);
-        return discount.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public CompletableFuture<ResponseEntity<Discount>> getDiscountById(@PathVariable UUID id) {
+        return discountsService.getDiscountById(id)
+                .thenApply(discountOpt -> discountOpt.map(ResponseEntity::ok)
+                        .orElseGet(() -> ResponseEntity.notFound().build()))
+                .exceptionally(ex -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 
     @PostMapping
-    public Discount createDiscount(@RequestBody DiscountDTO discountDTO) {
-        return discountsService.createDiscount(discountDTO);
+    public CompletableFuture<ResponseEntity<Discount>> createDiscount(@RequestBody DiscountDTO discountDTO) {
+        return discountsService.createDiscount(discountDTO)
+                .thenApply(ResponseEntity::ok)
+                .exceptionally(ex -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Discount> updateDiscount(@PathVariable UUID id, @RequestBody Discount discounts) {
-        Discount updatedDiscount = discountsService.updateDiscount(id, discounts);
-        return new ResponseEntity<>(updatedDiscount, HttpStatus.OK);
+    public CompletableFuture<ResponseEntity<Discount>> updateDiscount(@PathVariable UUID id, @RequestBody Discount discount) {
+        return discountsService.updateDiscount(id, discount)
+                .thenApply(ResponseEntity::ok)
+                .exceptionally(ex -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 
     @PostMapping("/stop/{id}")
-    public ResponseEntity<Void> stopAccount(@PathVariable UUID id) {
-        discountsService.stopDiscount(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public CompletableFuture<ResponseEntity<Object>> stopAccount(@PathVariable UUID id) {
+        return CompletableFuture.runAsync(() -> discountsService.stopDiscount(id))
+                .thenApply(unused -> ResponseEntity.notFound().build())
+                .exceptionally(ex -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDiscount(@PathVariable UUID id) {
-        discountsService.deleteDiscount(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public CompletableFuture<ResponseEntity<Object>> deleteDiscount(@PathVariable UUID id) {
+        return CompletableFuture.runAsync(() -> discountsService.deleteDiscount(id))
+                .thenApply(unused -> ResponseEntity.notFound().build())
+                .exceptionally(ex -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 }

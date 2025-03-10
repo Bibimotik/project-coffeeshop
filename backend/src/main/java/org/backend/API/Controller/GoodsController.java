@@ -1,5 +1,6 @@
 package org.backend.API.Controller;
 
+import jakarta.servlet.ServletRequest;
 import org.backend.Application.DTO.GoodsDTO;
 import org.backend.Domain.Model.Goods;
 import org.backend.Application.Service.GoodsService;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/admin/goods")
@@ -20,36 +22,45 @@ public class GoodsController {
     }
 
     @GetMapping
-    public Iterable<Goods> getAllGoods() {
-        return goodsService.getAllGoods();
+    public CompletableFuture<ResponseEntity<Iterable<Goods>>> getAllGoods() {
+        return goodsService.getAllGoods()
+                .thenApply(ResponseEntity::ok)
+                .exceptionally(ex -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Goods> getGoods(@PathVariable UUID id) {
-        Optional<Goods> goods = goodsService.getGoods(id);
-        return goods.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public CompletableFuture<ResponseEntity<Optional<Goods>>> getGoods(@PathVariable UUID id, ServletRequest servletRequest) {
+        return goodsService.getGoodsById(id)
+                .thenApply(ResponseEntity::ok)
+                .exceptionally(ex -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 
     @PostMapping
-    public Goods createGoods(@RequestBody GoodsDTO goodsDTO) {
-        return goodsService.createGoods(goodsDTO);
+    public CompletableFuture<ResponseEntity<Goods>> createGoods(@RequestBody GoodsDTO goodsDTO) {
+        return goodsService.createGoods(goodsDTO)
+                .thenApply(ResponseEntity::ok)
+                .exceptionally(ex -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Goods> updateGoods(@PathVariable UUID id, @RequestBody Goods goods) {
-        Goods updatedGoods = goodsService.updateGoods(id, goods);
-        return new ResponseEntity<>(updatedGoods, HttpStatus.OK);
+    public CompletableFuture<ResponseEntity<Goods>> updateGoods(@PathVariable UUID id, @RequestBody Goods goods) {
+        return goodsService.getGoodsById(id)
+                .thenApply(goodsOpt -> goodsOpt.map(ResponseEntity::ok)
+                        .orElseGet(() -> ResponseEntity.notFound().build()))
+                .exceptionally(ex -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 
     @PostMapping("/stop/{id}")
-    public ResponseEntity<Void> stopGoods(@PathVariable UUID id) {
-        goodsService.stopGoods(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public CompletableFuture<ResponseEntity<Object>> stopGoods(@PathVariable UUID id) {
+        return CompletableFuture.runAsync(() -> goodsService.stopGoods(id))
+                .thenApply(unused -> ResponseEntity.notFound().build())
+                .exceptionally(ex -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGoods(@PathVariable UUID id) {
-        goodsService.deleteGoods(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public CompletableFuture<ResponseEntity<Object>> deleteGoods(@PathVariable UUID id) {
+        return CompletableFuture.runAsync(() -> goodsService.deleteGoods(id))
+                .thenApply(unused -> ResponseEntity.notFound().build())
+                .exceptionally(ex -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 }

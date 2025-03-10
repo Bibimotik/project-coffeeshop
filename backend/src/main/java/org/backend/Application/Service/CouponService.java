@@ -7,11 +7,13 @@ import org.backend.Domain.Model.Coupon;
 import org.backend.Persistence.Repository.ClientRepository;
 import org.backend.Persistence.Repository.CouponRepository;
 import org.backend.Persistence.Repository.GoodsRepository;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class CouponService implements ICouponsService {
@@ -27,15 +29,18 @@ public class CouponService implements ICouponsService {
         this.couponMapper = couponMapper;
     }
 
-    public Iterable<Coupon> getAllCoupons() {
-        return couponsRepository.findAll();
+    @Async
+    public CompletableFuture<Iterable<Coupon>> getAllCoupons() {
+        return CompletableFuture.supplyAsync(couponsRepository::findAll);
     }
 
-    public Optional<Coupon> getCouponById(UUID id) {
-        return couponsRepository.findById(id);
+    @Async
+    public CompletableFuture<Optional<Coupon>> getCouponById(UUID id) {
+        return CompletableFuture.supplyAsync(() -> couponsRepository.findById(id));
     }
 
-    public Coupon createCoupon(CouponDTO couponDTO) {
+    @Async
+    public CompletableFuture<Coupon> createCoupon(CouponDTO couponDTO) {
         var client = clientRepository.findById(couponDTO.clientId())
                 .orElseThrow(() -> new RuntimeException("Client not found"));
 
@@ -43,10 +48,11 @@ public class CouponService implements ICouponsService {
                 .orElseThrow(() -> new RuntimeException("Goods not found"));
 
         Coupon coupon = couponMapper.toEntity(client, goods, couponDTO);
-        return couponsRepository.save(coupon);
+        return CompletableFuture.supplyAsync(() -> couponsRepository.save(coupon));
     }
 
-    public Coupon updateCoupon(UUID id, CouponDTO couponDTO) {
+    @Async
+    public CompletableFuture<Coupon> updateCoupon(UUID id, CouponDTO couponDTO) {
         Optional<Coupon> existingCoupons = couponsRepository.findById(id);
 
         if (existingCoupons.isPresent()) {
@@ -63,12 +69,13 @@ public class CouponService implements ICouponsService {
             existing.setPercent(couponDTO.percent());
             existing.setUpdateDate(LocalDate.now());
 
-            return couponsRepository.save(existing);
+            return CompletableFuture.supplyAsync(() -> couponsRepository.save(existing));
         } else {
             throw new RuntimeException("Coupon not found");
         }
     }
 
+    @Async
     public void stopCoupons(UUID id) {
         Optional<Coupon> couponsOptional = couponsRepository.findById(id);
 
@@ -76,11 +83,12 @@ public class CouponService implements ICouponsService {
             Coupon coupons = couponsOptional.get();
             coupons.setDeleted(true);
             coupons.setUpdateDate(LocalDate.now());
-            couponsRepository.save(coupons);
+            CompletableFuture.runAsync(() -> couponsRepository.save(coupons));
         }
     }
 
+    @Async
     public void deleteCoupon(UUID id) {
-        couponsRepository.deleteById(id);
+        CompletableFuture.runAsync(() -> couponsRepository.deleteById(id));
     }
 }
