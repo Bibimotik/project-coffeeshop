@@ -10,7 +10,7 @@ public interface ICouponsService {
     Iterable<Coupon> getAllCoupons();
     Optional<Coupon> getCouponById(UUID id);
     Coupon createCoupon(CouponDTO couponDTO);
-    Coupon updateCoupon(UUID id, Coupon coupons);
+     Coupon updateCoupon(UUID id, CouponDTO couponDTO);
     void stopCoupons(UUID id);
     void deleteCoupon(UUID id);
 }

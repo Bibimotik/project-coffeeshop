@@ -36,8 +36,8 @@ public class CouponController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Coupon> updateCoupon(@PathVariable UUID id, @RequestBody Coupon coupons) {
-        Coupon updatedCoupon = couponsService.updateCoupon(id, coupons);
+    public ResponseEntity<Coupon> updateCoupon(@PathVariable UUID id, @RequestBody CouponDTO couponDTO) {
+        Coupon updatedCoupon = couponsService.updateCoupon(id, couponDTO);
         return new ResponseEntity<>(updatedCoupon, HttpStatus.OK);
     }
 

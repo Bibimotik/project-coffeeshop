@@ -4,7 +4,9 @@ import org.backend.API.Mappers.CouponMapper;
 import org.backend.Application.DTO.CouponDTO;
 import org.backend.Application.Interfaces.ICouponsService;
 import org.backend.Domain.Model.Coupon;
+import org.backend.Persistence.Repository.ClientRepository;
 import org.backend.Persistence.Repository.CouponRepository;
+import org.backend.Persistence.Repository.GoodsRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,9 +16,15 @@ import java.util.UUID;
 @Service
 public class CouponService implements ICouponsService {
     private final CouponRepository couponsRepository;
+    private final ClientRepository clientRepository;
+    private final GoodsRepository goodsRepository;
+    private final CouponMapper couponMapper;
 
-    public CouponService(CouponRepository couponsRepository) {
+    public CouponService(CouponRepository couponsRepository, ClientRepository clientRepository, GoodsRepository goodsRepository, CouponMapper couponMapper) {
         this.couponsRepository = couponsRepository;
+        this.clientRepository = clientRepository;
+        this.goodsRepository = goodsRepository;
+        this.couponMapper = couponMapper;
     }
 
     public Iterable<Coupon> getAllCoupons() {
@@ -28,24 +36,37 @@ public class CouponService implements ICouponsService {
     }
 
     public Coupon createCoupon(CouponDTO couponDTO) {
-        Coupon coupon = CouponMapper.toEntity(couponDTO);
+        var client = clientRepository.findById(couponDTO.clientId())
+                .orElseThrow(() -> new RuntimeException("Client not found"));
+
+        var goods = goodsRepository.findById(couponDTO.goodsId())
+                .orElseThrow(() -> new RuntimeException("Goods not found"));
+
+        Coupon coupon = couponMapper.toEntity(client, goods, couponDTO);
         return couponsRepository.save(coupon);
     }
 
-    public Coupon updateCoupon(UUID id, Coupon coupons) {
+    public Coupon updateCoupon(UUID id, CouponDTO couponDTO) {
         Optional<Coupon> existingCoupons = couponsRepository.findById(id);
 
         if (existingCoupons.isPresent()) {
             Coupon existing = existingCoupons.get();
 
-            existing.setPercent(coupons.getPercent());
-            existing.setUpdateDate(LocalDate.now());
-        } else {
-            coupons.setCreationDate(LocalDate.now());
-            coupons.setUpdateDate(LocalDate.now());
-        }
+            var client = clientRepository.findById(couponDTO.clientId())
+                    .orElseThrow(() -> new RuntimeException("Client not found"));
 
-        return couponsRepository.save(coupons);
+            var goods = goodsRepository.findById(couponDTO.goodsId())
+                    .orElseThrow(() -> new RuntimeException("Goods not found"));
+
+            existing.setClient(client);
+            existing.setGoods(goods);
+            existing.setPercent(couponDTO.percent());
+            existing.setUpdateDate(LocalDate.now());
+
+            return couponsRepository.save(existing);
+        } else {
+            throw new RuntimeException("Coupon not found");
+        }
     }
 
     public void stopCoupons(UUID id) {
