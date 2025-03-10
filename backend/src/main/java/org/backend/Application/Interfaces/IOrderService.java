@@ -12,5 +12,5 @@ public interface IOrderService {
 
 	CompletableFuture<Optional<Order>> getAsync(UUID id);
 
-	CompletableFuture<Order> createAsync(OrderDTO order);
+	CompletableFuture<Order> createAsync(UUID clientId);
 }

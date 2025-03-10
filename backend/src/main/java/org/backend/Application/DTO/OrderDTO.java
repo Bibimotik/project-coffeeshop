@@ -1,11 +1,6 @@
 package org.backend.Application.DTO;
 
-import org.backend.Domain.Model.Client;
-
 import java.math.BigDecimal;
+import java.util.UUID;
 
-public record OrderDTO(
-        Client clientId,
-        BigDecimal totalAmount
-) {
-}
+public record OrderDTO(UUID clientId, BigDecimal totalAmount) { }

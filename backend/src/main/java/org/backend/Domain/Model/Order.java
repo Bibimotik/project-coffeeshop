@@ -16,10 +16,15 @@ public class Order {
     @Column(name = "id")
     private UUID id;
 
+//    @NotNull(message = "Client ID cannot be null")
+//    @ManyToOne(optional = false)
+//    @JoinColumn(name = "clients_id", nullable = false)
+//    private Client client;
+
+    //TODO оставляем просто поле clientid
     @NotNull(message = "Client ID cannot be null")
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "clients_id", nullable = false)
-    private Client client;
+    @Column(name = "clients_id", nullable = false)
+    private UUID clientId; // Просто clientId, без связи @ManyToOne
 
     @NotNull(message = "Total amount cannot be null")
     @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
@@ -41,32 +46,34 @@ public class Order {
         this.updateDate = LocalDate.now();
     }
 
-    public Order(Client client, BigDecimal totalAmount) {
-        this.client = client;
+    public Order(UUID clientId, BigDecimal totalAmount) {
+        this.clientId = clientId;
         this.totalAmount = totalAmount;
         this.creationDate = LocalDate.now();
         this.updateDate = LocalDate.now();
     }
 
     public UUID getId() { return id; }
-    public Client getClient() { return client; }
+//    public Client getClient() { return client; }
     public BigDecimal getTotalAmount() { return totalAmount; }
     public LocalDate getCreationDate() { return creationDate; }
     public LocalDate getUpdateDate() { return updateDate; }
     public boolean isDeleted() { return isDeleted; }
+    public UUID getClientId() { return clientId; }
 
     public void setId(UUID id) { this.id = id; }
-    public void setClient(Client client) { this.client = client; }
+//    public void setClient(Client client) { this.client = client; }
     public void setTotalAmount(BigDecimal totalAmount) { this.totalAmount = totalAmount; }
     public void setCreationDate(LocalDate creationDate) { this.creationDate = creationDate; }
     public void setUpdateDate(LocalDate updateDate) { this.updateDate = updateDate; }
     public void setDeleted(boolean isDeleted) { this.isDeleted = isDeleted; }
+    public void setClientId(UUID clientId) { this.clientId = clientId; }
 
     @Override
     public String toString() {
         return "Order{" +
                 "id=" + id +
-                ", client=" + client +
+//                ", client=" + client +
                 ", totalAmount=" + totalAmount +
                 ", creationDate=" + creationDate +
                 ", updateDate=" + updateDate +
