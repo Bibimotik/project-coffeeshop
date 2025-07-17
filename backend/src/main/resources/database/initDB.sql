@@ -1,4 +1,4 @@
-CREATE TABLE clients (
+CREATE TABLE IF NOT EXISTS clients (
     id UUID PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
     phone VARCHAR(20) UNIQUE NOT NULL,
@@ -7,13 +7,13 @@ CREATE TABLE clients (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE product_categories (
+CREATE TABLE IF NOT EXISTS product_categories (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) UNIQUE NOT NULL,
     display_order SMALLINT NOT NULL DEFAULT 0
 );
 
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
     id UUID PRIMARY KEY,
     category_id INT REFERENCES product_categories(id) ON DELETE SET NULL,
     name VARCHAR(100) NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE products (
     updated_at TIMESTAMP
 );
 
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS orders (
     id UUID PRIMARY KEY,
     client_id UUID REFERENCES clients(id) ON DELETE SET NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'preparing', 'ready', 'completed', 'cancelled')),
@@ -37,7 +37,7 @@ CREATE TABLE orders (
     bonus_points_earned INT DEFAULT 0 CHECK (bonus_points_earned >= 0)
 );
 
-CREATE TABLE order_items (
+CREATE TABLE IF NOT EXISTS order_items (
     order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
     product_id UUID REFERENCES products(id) ON DELETE RESTRICT,
     quantity INT NOT NULL CHECK (quantity > 0),
@@ -45,7 +45,7 @@ CREATE TABLE order_items (
     PRIMARY KEY (order_id, product_id)
 );
 
-CREATE TABLE promotions (
+CREATE TABLE IF NOT EXISTS promotions (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     image_url VARCHAR(255),
