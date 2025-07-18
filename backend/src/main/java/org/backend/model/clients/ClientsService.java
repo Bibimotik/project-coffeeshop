@@ -28,10 +28,11 @@ public class ClientsService implements IClientsService {
             Clients client = clientsRepository.findById(clientId).orElseThrow(() -> new ClientNotExists("Client with ID " + clientId + " not found"));
             return clientsMapper.toDTO(client);
     }).exceptionally(ex -> {
+            Throwable cause = ex.getCause();
             if (ex instanceof ClientNotExists) {
-              throw (ClientNotExists) ex.getCause();
+              throw (ClientNotExists) cause;
             }
-            throw new ClientServiceException("Error finding client", ex);
+            throw new ClientServiceException("Error finding client", cause);
     });
   }
 
@@ -45,33 +46,51 @@ public class ClientsService implements IClientsService {
             Clients savedClient = clientsRepository.save(client);
             return clientsMapper.toDTO(savedClient);
     }).exceptionally(ex -> {
+            Throwable cause = ex.getCause();
             if (ex.getCause() instanceof ClientAlreadyExistsException) {
-              throw (ClientAlreadyExistsException) ex.getCause();
+              throw (ClientAlreadyExistsException) cause;
             }
-            throw new ClientServiceException("Failed to save client: " + ex.getMessage(), ex.getCause());
+            throw new ClientServiceException("Failed to save client: " + ex.getMessage(), cause);
     });
   }
 
   @Async
   public CompletableFuture<ClientsResponseDto> updateClient(UUID clientId, @Valid ClientsRequestDto clientsRequestDto) {
     return CompletableFuture.supplyAsync(() -> {
-            if (!clientsRepository.existsById(clientId)) {
-              throw new ClientNotExists("Client with ID " + clientId + " not found");
+            Clients existingClient = clientsRepository.findById(clientId).orElseThrow(() -> new ClientNotExists("Client with ID " + clientId + " not found"));
+
+            if (clientsRepository.existsClientsByEmailOrPhone(clientsRequestDto.email(), clientsRequestDto.phone())) {
+              throw new ClientAlreadyExistsException("Client with this email or phone already exists");
             }
 
-            Clients client = clientsMapper.toEntity(clientsRequestDto);
-            Clients updatedClient = clientsRepository.save(client);
+            existingClient.setEmail(clientsRequestDto.email());
+            existingClient.setPhone(clientsRequestDto.phone());
+            existingClient.setFullName(clientsRequestDto.fullName());
+
+            Clients updatedClient = clientsRepository.save(existingClient);
             return clientsMapper.toDTO(updatedClient);
     }).exceptionally(ex -> {
+            Throwable cause = ex.getCause();
             if (ex.getCause() instanceof ClientNotExists) {
-              throw (ClientNotExists) ex.getCause();
+              throw (ClientNotExists) cause;
             }
-            throw new ClientServiceException("Failed to update client: " + ex.getMessage(), ex.getCause());
+            throw new ClientServiceException("Failed to update client: " + ex.getMessage(), cause);
     });
   }
 
   @Async
-  public void deleteClient(UUID clientId) {
-    clientsRepository.deleteById(clientId);
+  public CompletableFuture<Void> deleteClient(UUID clientId) {
+    return CompletableFuture.runAsync(() -> {
+      if (!clientsRepository.existsById(clientId)) {
+        throw new ClientNotExists("Client with ID " + clientId + " not found");
+      }
+      clientsRepository.deleteById(clientId);
+    }).exceptionally(ex -> {
+      Throwable cause = ex.getCause();
+      if (ex.getCause() instanceof ClientNotExists) {
+        throw (ClientNotExists) cause;
+      }
+      throw new ClientServiceException("Failed to delete client: " + ex.getMessage(), cause);
+    });
   }
 }

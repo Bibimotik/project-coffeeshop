@@ -11,5 +11,5 @@ public interface IClientsService {
   CompletableFuture<ClientsResponseDto> findClient(UUID clientId);
   CompletableFuture<ClientsResponseDto> addClient(@Valid ClientsRequestDto clientsRequestDto);
   CompletableFuture<ClientsResponseDto> updateClient(UUID clientId, @Valid ClientsRequestDto clientsRequestDto);
-  void deleteClient(UUID clientId);
+  CompletableFuture<Void> deleteClient(UUID clientId);
 }
