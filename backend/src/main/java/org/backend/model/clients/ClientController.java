@@ -1,7 +1,7 @@
 package org.backend.model.clients;
 
-import org.backend.model.clients.DTO.ClientsRequestDto;
-import org.backend.model.clients.DTO.ClientsResponseDto;
+import org.backend.model.clients.DTO.ClientRequestDto;
+import org.backend.model.clients.DTO.ClientResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,24 +10,24 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/clients")
-public class ClientsController {
-  private final IClientsService clientsService;
-  public ClientsController(IClientsService clientsService) {
+public class ClientController {
+  private final IClientService clientsService;
+  public ClientController(IClientService clientsService) {
     this.clientsService = clientsService;
   }
 
   @PostMapping()
-  public ResponseEntity<CompletableFuture<ClientsResponseDto>> addClient(@RequestBody ClientsRequestDto client) {
+  public ResponseEntity<CompletableFuture<ClientResponseDto>> addClient(@RequestBody ClientRequestDto client) {
     return ResponseEntity.ok().body(clientsService.addClient(client));
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<CompletableFuture<ClientsResponseDto>> getClientById(@PathVariable("id") UUID id) {
+  public ResponseEntity<CompletableFuture<ClientResponseDto>> getClientById(@PathVariable("id") UUID id) {
     return ResponseEntity.ok().body(clientsService.findClient(id));
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<CompletableFuture<ClientsResponseDto>> updateClient(@PathVariable("id") UUID id, @RequestBody ClientsRequestDto client) {
+  public ResponseEntity<CompletableFuture<ClientResponseDto>> updateClient(@PathVariable("id") UUID id, @RequestBody ClientRequestDto client) {
     return ResponseEntity.ok().body(clientsService.updateClient(id, client));
   }
 

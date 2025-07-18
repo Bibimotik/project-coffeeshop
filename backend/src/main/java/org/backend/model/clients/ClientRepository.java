@@ -5,8 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface ClientsRepository extends JpaRepository<Clients, UUID> {
-  Optional<Clients> findById(UUID id);
+public interface ClientRepository extends JpaRepository<Client, UUID> {
+  Optional<Client> findById(UUID id);
   boolean existsById(UUID id);
   boolean existsByEmail(String email);
   boolean existsByPhone(String phone);

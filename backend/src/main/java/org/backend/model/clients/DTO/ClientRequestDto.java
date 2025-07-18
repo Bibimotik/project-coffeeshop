@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record ClientsRequestDto(
+public record ClientRequestDto(
         @NotNull @Email String email,
         @NotNull @Size(max = 255) String phone,
         @NotNull @Size(max = 255) String fullName
