@@ -12,7 +12,7 @@ public record ProductResponseDto(
         String description,
         String volume,
         BigDecimal price,
-        Boolean isActive,
+        boolean isActive,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -20,5 +20,5 @@ public record ProductResponseDto(
           Integer id,
           String name,
           Short displayOrder
-  ) {}
+  ) { }
 }

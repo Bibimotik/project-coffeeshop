@@ -30,6 +30,7 @@ public class ProductCategory {
   public String getName() { return name; }
   public Short getDisplayOrder() { return displayOrder; }
 
+  public void setId(Integer id) { this.id = id; }
   public void setName(String name) { this.name = name; }
   public void setDisplayOrder(Short displayOrder) { this.displayOrder = displayOrder; }
 }

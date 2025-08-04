@@ -19,5 +19,5 @@ public record ProductRequestDto (
         @Positive(message = "Price must be positive")
         @Digits(integer = 10, fraction = 2, message = "Price must have up to 10 integer and 2 fraction digits")
         BigDecimal price,
-        Boolean isActive
+        boolean isActive
 ) { }

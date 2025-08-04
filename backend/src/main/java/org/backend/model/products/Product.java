@@ -35,8 +35,8 @@ public class Product {
   @Positive
   @Digits(integer = 10, fraction = 2)
   private BigDecimal price;
-  @Column(name = "is_active")
-  private Boolean isActive = true;
+  @Column(name = "is_active", nullable = false)
+  private boolean isActive = true;
   @CreationTimestamp
   @Column(name = "created_at", updatable = false)
   private LocalDateTime createdAt;
@@ -46,10 +46,12 @@ public class Product {
 
   public Product() {}
 
-  public Product(ProductCategory category, String name, String imageUrl, BigDecimal price, boolean isActive) {
+  public Product(ProductCategory category, String name, String imageUrl, String description, String volume, BigDecimal price, boolean isActive) {
     this.category = category;
     this.name = name;
     this.imageUrl = imageUrl;
+    this.description = description;
+    this.volume = volume;
     this.price = price;
     this.isActive = isActive;
   }
@@ -72,6 +74,4 @@ public class Product {
   public void setPrice(BigDecimal price) { this.price = price; }
   public void setDescription(String description) { this.description = description; }
   public void setActive(Boolean active) { isActive = active; }
-  public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-  public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }
